@@ -19,4 +19,9 @@ describe("Basic API Tests", () => {
     expect(res.statusCode).toBe(400);
     expect(res.body).toEqual({ error: "Missing query parameters" });
   });
+  test("GET /bye should return OKAY, BYE NOW!!", async () => {
+    const res = await request(app).get("/bye");
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({ message: "OKAY, BYE NOW!!" });
+  });
 });
