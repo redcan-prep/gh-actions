@@ -15,4 +15,8 @@ app.get("/sum", (req, res) => {
   res.json({ result: Number(a) + Number(b) });
 });
 
+app.get("/bye", (req, res) => {
+  res.json({ message: "OKAY, BYE NOW!!" });
+});
+
 module.exports = app;
