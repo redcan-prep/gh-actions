@@ -5,6 +5,7 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 import os
 from dotenv import load_dotenv
+import re
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY2")
 
@@ -85,10 +86,51 @@ def detect_category(user_input):
         print(f"Error: {e}")
         return {}
 
-
-def ask_followup_questions(category, known_details):
-    """Step 2: Ask relevant follow-up questions based on the category in one prompt."""
+def detect_implicit_answers(user_input, category):
+    """Detect implicit answers from user input using keyword matching."""
     
+    # Define keywords for each follow-up question
+    keyword_map = {
+        "Application setup": {
+            "What type of app (web, mobile, enterprise)?": ["web", "mobile", "enterprise"],
+            "Which framework are you using (React, Angular, Vue, Django, etc.)?": ["react", "angular", "vue", "django", "flask"],
+            "Do you need authentication (OAuth, JWT, API Key)?": ["oauth", "jwt", "api key", "authentication"]
+        },
+        "Payment integration":{
+            "Which payment gateway do you want to use (Stripe, PayPal, Authorize.net)?": ["stripe", "paypal", "authorize.net", "braintree"],
+            "Do you need recurring billing support?": ["recurring", "subscription", "billing"],
+            "Do you need 3D Secure authentication?": ["3d secure", "secure authentication"]
+        },
+        "API configuration": {
+            "Which API are you integrating?": ["google api", "facebook api", "twitter api", "openai api"],
+            "Do you need authentication for the API (OAuth, API Key)?": ["oauth", "api key", "jwt"],
+            "Do you need rate limiting or caching?": ["rate limit", "caching"]
+        },
+        "Authentication setup": {
+            "Which authentication method are you using (OAuth, JWT, API Key)?": ["oauth", "jwt", "api key"],
+            "Do you need multi-factor authentication?": ["mfa", "2fa", "multi-factor"],
+            "Do you need single sign-on (SSO)?": ["sso", "single sign-on"]
+        },
+        "Database setup": {
+            "What database are you using (MySQL, PostgreSQL, MongoDB)?": ["mysql", "postgresql", "mongo", "sqlite"],
+            "Do you need cloud hosting (AWS, Firebase, etc.)?": ["aws", "firebase", "gcp", "azure"],
+            "Do you need database replication or backups?": ["replication", "backup"]
+        }
+    }
+    
+    detected_answers = {}
+    user_input_lower = user_input.lower().strip()
+
+    if category in keyword_map:
+        for question, keywords in keyword_map[category].items():
+            if any(re.search(rf"\b{re.escape(kw)}\b", user_input_lower) for kw in keywords):
+                detected_answers[question.lower()] = True  # Mark question as already answered
+    
+    return detected_answers
+
+def ask_followup_questions(category, user_input, known_details):
+    """Step 2: Ask relevant follow-up questions based on the category and ensure we don't ask for already provided details."""
+
     questions_dict = {
         "Application setup": [
             "What type of app (web, mobile, enterprise)?",
@@ -116,16 +158,19 @@ def ask_followup_questions(category, known_details):
             "Do you need database replication or backups?"
         ]
     }
-    
+
+    # Detect implicit answers from user input
+    implicit_answers = detect_implicit_answers(user_input, category)
+
+    # Merge explicit (known_details) and implicit answers
+    all_answered_questions = {**implicit_answers, **{q.lower(): True for q, a in known_details.items() if a}}
+
+    # Filter out questions that have already been answered
     if category in questions_dict:
-        remaining_questions = [
-            q for q in questions_dict[category] if q not in known_details
-        ]
+        remaining_questions = [q for q in questions_dict[category] if q.lower() not in all_answered_questions]
         return remaining_questions
     else:
         return ["Can you provide more details about your request?"]
-
-
 
 
 def ask_llm(user_input, context_history):
@@ -143,7 +188,7 @@ def ask_llm(user_input, context_history):
     print(f"AI Detected Category: {category}")
     
     # Step 2: Check if we have enough details
-    followup_questions = ask_followup_questions(category, context_history)
+    followup_questions = ask_followup_questions(category, user_input, context_history)
     
     if followup_questions:
         return {
