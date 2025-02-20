@@ -1,0 +1,70 @@
+[
+    {
+        "singularDisplay": "Declaration Question",
+        "entity": "reg_declarationquestion",
+        "description": "A declaration is a question that has a yes or no response with a correct answer. Answering the declaration incorrectly will require a written explanation from the user and the upload of a file if configured. Declarations appear on a standard portal page. Contains all declarations used for individual license applications, including initial application, license reinstatement, license status change, and renewal. Declarations associated with an application type only appear on the associated application, and license type only if appearing on a renewal process. Application, license reinstatement, license status change, and renewal declarations could be combined into one entry if identical but it is recommended they are separated for maximum flexibility. Additional parameters for ordinal, whether a file upload is required, the correct response, and always show additional details.",
+        "attributes": {
+          "reg_registrationstatusid": {
+            "labelname": "Destination License Status",
+            "datatype": "lookup",
+            "required": false,
+            "description": "Select the destination license status that this declaration question is associated with.",
+            "connectedspace" : "reg_registrationstatus"
+          },
+          "tc_name": {
+            "labelname": "Name",
+            "datatype": "String",
+            "required": true,
+            "description": "Enter a unique name for the individual license declaration question."
+          },
+          "reg_section_ordinal": {
+            "labelname": "Section Ordinal",
+            "datatype": "Integer",
+            "required": true,
+            "description": "Enter the section number indicating the display order of this declaration text."
+          },
+          "reg_requires_upload": {
+            "labelname": "Requires Upload?",
+            "datatype": "radio",
+            "required": false,
+            "description": "Select “Yes” if the declaration question requires a document upload. Uploading a document for the declaration question is not required when this is set to “No” or “Unset”."
+          },
+          "reg_correct_answer": {
+            "labelname": "Correct Answer",
+            "datatype": "radio",
+            "required": true,
+            "description": "Select “Yes” if this is the correct answer. It is not the correct answer when this is set to “No” or “Unset”."
+          },
+          "reg_always_show_additional_details": {
+            "labelname": "Always Show Additional Details",
+            "datatype": "radio",
+            "required": false
+          },
+
+          "reg_visible_to_application_process": {
+            "labelname": "Application Process",
+            "datatype": "radio",
+            "required": false,
+            "description": "Select “Yes” if this declaration question is visible to the application process. The declaration question is not visible to the application process when this is set to “No” or “Unset”."
+          },
+          "reg_visible_to_renewal_process": {
+            "labelname": "Renewal Process",
+            "datatype": "radio",
+            "required": false,
+            "description": "Select “Yes” if this declaration question is visible to the renewal process. The declaration question is not visible to the renewal process when this is set to “No” or “Unset”."
+          },
+          "reg_visible_to_reinstatement_process": {
+            "labelname": "Reinstatement Process",
+            "datatype": "radio",
+            "required": false,
+            "description": "Select “Yes” if this declaration question is visible to the reinstatement process. The declaration question is not visible to the reinstatement process when this is set to “No” or “Unset”."
+          },
+          "reg_visible_to_status_change_process": {
+            "labelname": "Status Change Process",
+            "datatype": "radio",
+            "required": false,
+            "description": "Select “Yes” if this declaration question is visible to the status change process. The declaration question is not visible to the status change process when this is set to “No” or “Unset”."
+          }
+        }
+      }
+]
