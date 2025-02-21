@@ -1,0 +1,17 @@
+{
+  "name": "ila",
+  "version": "1.0.0",
+  "description": "Project Setup:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "openai": "^4.85.3"
+  }
+}

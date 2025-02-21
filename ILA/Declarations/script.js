@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import readline from "readline";
 import dotenv from "dotenv";
-import { getListOfQuestions } from "../prompt.js";
+import { getListOfQuestions } from "./prompt.js";
 import { json } from "stream/consumers";
 dotenv.config();
 
