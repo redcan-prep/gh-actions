@@ -35,7 +35,7 @@ async function collectUserResponses(questions) {
   const responses = {};
 
   for (const { field, required, question } of questions) {
-    while (true) { // Keep asking required questions until answered
+    while (true) {
       const answer = await new Promise((resolve) => {
         rl.question(`${question}: `, (userInput) => {
           resolve(userInput.trim());
@@ -52,6 +52,48 @@ async function collectUserResponses(questions) {
       }
 
       console.log("⚠️ This field is required. Please enter a response.");
+    }
+  }
+
+  // Step 1: Show collected responses
+  console.log("\n✅ Here are your answers:");
+  Object.entries(responses).forEach(([key, value]) => {
+    console.log(`${key}: ${value}`);
+  });
+
+  // Step 2: Allow modifications
+  while (true) {
+    const editChoice = await new Promise((resolve) => {
+      rl.question("\nWould you like to modify any answer? (yes/no): ", (input) => {
+        resolve(input.trim().toLowerCase());
+      });
+    });
+
+    if (editChoice === "no") break;
+
+    if (editChoice === "yes") {
+      const fieldToEdit = await new Promise((resolve) => {
+        rl.question("\nWhich field would you like to edit? (Enter the field name or 'done' to finish): ", (input) => {
+          resolve(input.trim());
+        });
+      });
+
+      if (fieldToEdit === "done") break;
+
+      if (responses[fieldToEdit] !== undefined) {
+        const newAnswer = await new Promise((resolve) => {
+          rl.question(`\nEnter a new value for ${fieldToEdit}: `, (input) => {
+            resolve(input.trim());
+          });
+        });
+
+        responses[fieldToEdit] = newAnswer;
+        console.log(`✅ Updated ${fieldToEdit} to: ${newAnswer}`);
+      } else {
+        console.log("⚠️ Invalid field name. Please try again.");
+      }
+    } else {
+      console.log("⚠️ Please enter 'yes' or 'no'.");
     }
   }
 
