@@ -6,7 +6,9 @@ import {
   reg_applicationrequireddocument_schema,
   reg_documenttype_schema,
 } from "./jsonSchema.js";
-dotenv.config();
+dotenv.config({
+  path: "../.env",
+});
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY2,

@@ -3,7 +3,7 @@ import readline from "readline";
 import dotenv from "dotenv";
 import { getListOfQuestions } from "./prompt.js";
 import { json } from "stream/consumers";
-dotenv.config();
+dotenv.config({ pathpath: "../.env" });
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY2,
@@ -17,7 +17,7 @@ const rl = readline.createInterface({
 // First LLM Call: Get all questions at once
 async function getQuestionsFromLLM() {
   const completion = await openai.chat.completions.create({
-    model: "gpt-4",// "gpt-3.5-turbo",
+    model: "gpt-4", // "gpt-3.5-turbo",
     messages: [
       {
         role: "system",
@@ -64,18 +64,24 @@ async function collectUserResponses(questions) {
   // Step 2: Allow modifications
   while (true) {
     const editChoice = await new Promise((resolve) => {
-      rl.question("\nWould you like to modify any answer? (yes/no): ", (input) => {
-        resolve(input.trim().toLowerCase());
-      });
+      rl.question(
+        "\nWould you like to modify any answer? (yes/no): ",
+        (input) => {
+          resolve(input.trim().toLowerCase());
+        }
+      );
     });
 
     if (editChoice === "no") break;
 
     if (editChoice === "yes") {
       const fieldToEdit = await new Promise((resolve) => {
-        rl.question("\nWhich field would you like to edit? (Enter the field name or 'done' to finish): ", (input) => {
-          resolve(input.trim());
-        });
+        rl.question(
+          "\nWhich field would you like to edit? (Enter the field name or 'done' to finish): ",
+          (input) => {
+            resolve(input.trim());
+          }
+        );
       });
 
       if (fieldToEdit === "done") break;
@@ -125,7 +131,7 @@ async function formatResponsesWithLLM(userResponses) {
         content: JSON.stringify(userResponses),
       },
     ],
-    response_format: json
+    response_format: json,
   });
 
   return JSON.parse(completion.choices[0].message.content);
