@@ -193,6 +193,6 @@ while True:
         user_response = input("User: ")
         context[llm_response['follow_up_question']] = user_response
     else:
-        print(f"AI Final Answer: {llm_response['answer']}")
+        print(f"AI Final Answer: {llm_response['answer']} . ")
         break  # Exit once we have enough information
 
